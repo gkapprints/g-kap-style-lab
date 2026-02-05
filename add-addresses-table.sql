@@ -41,6 +41,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
+
 -- Trigger to maintain single default address per user
 CREATE TRIGGER ensure_default_address_trigger
   BEFORE INSERT OR UPDATE ON public.addresses
