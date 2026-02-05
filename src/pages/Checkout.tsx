@@ -38,6 +38,7 @@ const Checkout = () => {
   const { user } = useAuth();
   const { data: savedAddresses = [] } = useAddresses();
   const [step, setStep] = useState<"shipping" | "payment" | "confirmation">("shipping");
+  const [orderId, setOrderId] = useState<string | null>(null);
   const [shippingMethod, setShippingMethod] = useState("standard");
   const [buyingFor, setBuyingFor] = useState<"me" | "someone">("me");
   const [selectedAddressId, setSelectedAddressId] = useState<string>("new");
@@ -285,7 +286,8 @@ const Checkout = () => {
                 total,
                 payment_id: response.razorpay_payment_id,
               };
-              await createOrder(orderData);
+              const createdOrder = await createOrder(orderData);
+              setOrderId(createdOrder?.id || null);
               if (designToBuy?.id) {
                 try { await deleteDesign(designToBuy.id); } catch {}
               }
@@ -337,7 +339,9 @@ const Checkout = () => {
             <p className="text-muted-foreground mb-2">
               Thank you for your order. We've sent a confirmation email to your inbox.
             </p>
-            <p className="font-semibold mb-8">Order #GK-{Math.random().toString(36).substring(2, 8).toUpperCase()}</p>
+            <p className="font-semibold mb-8">
+              {orderId ? `Order #GK-${orderId}` : "Order placed!"}
+            </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to={designToBuy ? "/profile" : "/shop"}>
                 <Button variant="hero">
