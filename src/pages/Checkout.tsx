@@ -240,7 +240,7 @@ const Checkout = () => {
 
       script.onload = async () => {
         const options = {
-          key: 'rzp_test_1DP5mmOlF5G5ag', // Demo key, replace with your own for production
+          key: 'rzp_test_SCvwcqcZDE41bS', // Demo key, replace with your own for production
           amount: Math.round(total * 100), // in paise
           currency: 'INR',
           name: 'G-KAP Store',
