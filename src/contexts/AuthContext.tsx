@@ -101,8 +101,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     localStorage.removeItem('access_token');
-    // Instead of reloading, redirect to login page
-    window.location.href = '/login';
+    // Do not reload or redirect here; let the caller handle navigation
   };
 
   const signInWithGoogle = async () => {

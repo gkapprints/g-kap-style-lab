@@ -27,7 +27,7 @@ const Profile = () => {
         title: "Signed out",
         description: "You've been successfully signed out.",
       });
-      navigate("/");
+      navigate("/login");
     } catch (error: any) {
       toast({
         title: "Error",
