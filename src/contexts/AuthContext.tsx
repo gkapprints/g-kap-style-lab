@@ -101,9 +101,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     localStorage.removeItem('access_token');
-    
-    // Clear React Query cache to reset cart and other user data
-    window.location.reload();
+    // Instead of reloading, redirect to login page
+    window.location.href = '/login';
   };
 
   const signInWithGoogle = async () => {
