@@ -1,31 +1,30 @@
-import nodemailer from 'nodemailer';
-import fs from 'fs';
-import path from 'path';
+import nodemailer from "nodemailer";
 
 export const transporter = nodemailer.createTransport({
-  service: 'gmail', // or your email provider
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, // MUST be true for App Password
   auth: {
     user: process.env.NOTIFY_EMAIL_USER,
     pass: process.env.NOTIFY_EMAIL_PASS,
   },
 });
 
-export const sendOrderNotification = async ({
+export async function sendOrderNotification({
   to,
   subject,
   html,
-  attachments = [],
 }: {
   to: string;
   subject: string;
   html: string;
-  attachments?: any[];
-}) => {
-  await transporter.sendMail({
-    from: process.env.NOTIFY_EMAIL_USER,
+}) {
+  const info = await transporter.sendMail({
+    from: `"GKAP Prints" <${process.env.NOTIFY_EMAIL_USER}>`,
     to,
     subject,
     html,
-    attachments,
   });
-};
+
+  console.log("✅ Email sent:", info.messageId);
+}

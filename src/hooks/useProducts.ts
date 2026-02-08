@@ -10,6 +10,7 @@ export interface ProductImage {
 }
 
 export interface Product {
+  image_url: string;
   id: string;
   name: string;
   description?: string;
