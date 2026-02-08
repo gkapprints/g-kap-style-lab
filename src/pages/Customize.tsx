@@ -537,14 +537,15 @@ const Customize = () => {
                     }
 
                     try {
+
                       // Create FormData for file upload
                       const formData = new FormData();
-                      
+
                       // Add designId if editing
                       if (designId) {
                         formData.append("designId", designId);
                       }
-                      
+
                       formData.append("tshirt_type", selectedType.type_id);
                       formData.append("tshirt_color", selectedColor.color_id);
                       formData.append("size", selectedSize);
@@ -552,19 +553,34 @@ const Customize = () => {
                       formData.append("quantity", quantity.toString());
                       formData.append("price", totalPrice.toString());
 
+                      // Helper to convert dataURL to File
+                      const dataUrlToFile = (dataUrl: string, filename: string) => {
+                        const [meta, content] = dataUrl.split(",");
+                        const mimeMatch = meta.match(/:(.*?);/);
+                        const mime = mimeMatch ? mimeMatch[1] : "image/png";
+                        const binary = atob(content);
+                        const len = binary.length;
+                        const u8 = new Uint8Array(len);
+                        for (let i = 0; i < len; i++) {
+                          u8[i] = binary.charCodeAt(i);
+                        }
+                        return new File([u8], filename, { type: mime });
+                      };
+
+                      // Attach original images for each side if present
+                      ["front", "back", "left", "right"].forEach((side) => {
+                        const imgData = sideImages[side as keyof typeof sideImages];
+                        if (imgData) {
+                          formData.append(`original_${side}`, dataUrlToFile(imgData, `original-${side}.png`));
+                        }
+                      });
+
                       // If composited texture exists, convert to file and upload
                       if (composedTexture && hasAnySideImage) {
-                        const arr = composedTexture.split(",");
-                        const mimeMatch = arr[0].match(/:(.*?);/);
-                        const mime = mimeMatch ? mimeMatch[1] : "image/png";
-                        const bstr = atob(arr[1]);
-                        let n = bstr.length;
-                        const u8 = new Uint8Array(n);
-                        while (n--) {
-                          u8[n] = bstr.charCodeAt(n);
-                        }
-                        const composedFile = new File([u8], "custom-design.png", { type: mime });
-                        formData.append("image", composedFile);
+                        formData.append(
+                          "image",
+                          dataUrlToFile(composedTexture, "custom-design.png")
+                        );
                       }
 
                       // Upload the custom design - this saves it to the database
