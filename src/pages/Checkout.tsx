@@ -286,7 +286,7 @@ const Checkout = () => {
 
       // 2️⃣ Create Razorpay order (BACKEND)
       const res = await fetch(
-        "http://localhost:3001/api/payments/razorpay/order",
+        `${import.meta.env.VITE_API_URL}/payments/razorpay/order`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -311,7 +311,7 @@ const Checkout = () => {
           try {
             // 4️⃣ VERIFY PAYMENT
             const verifyRes = await fetch(
-              "http://localhost:3001/api/payments/razorpay/verify",
+              `${import.meta.env.VITE_API_URL}/payments/razorpay/verify`,
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -382,12 +382,12 @@ const Checkout = () => {
               throw new Error("User not authenticated");
             }
             const res = await fetch(
-              `http://localhost:3001/api/orders/${createdOrder.id}/payment-success`,
+              `${import.meta.env.VITE_API_URL}/orders/${createdOrder.id}/payment-success`,
               {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                  Authorization: `Bearer ${session.access_token}`, // ✅ REAL TOKEN
+                  Authorization: `Bearer ${session.access_token}`,
                 },
               },
             );
