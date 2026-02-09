@@ -1,4 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Upload, RotateCcw, Trash2, ShoppingBag, Sparkles, Check, Download } from "lucide-react";
 import { useParams } from "react-router-dom";
@@ -20,6 +22,8 @@ const printLocations = [
 ];
 
 const Customize = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const { designId } = useParams<{ designId?: string }>();
   const { data: tshirtTypes = [], isLoading: loadingTypes } = useTshirtTypes();
   const { data: tshirtColors = [], isLoading: loadingColors } = useTshirtColors();
@@ -30,7 +34,15 @@ const Customize = () => {
   const [printLocation, setPrintLocation] = useState("front");
   const [quantity, setQuantity] = useState(1);
   const [isLoadingDesign, setIsLoadingDesign] = useState(!!designId);
-  const [sideImages, setSideImages] = useState({ front: "", back: "", left: "", right: "" });
+  const [sideImages, setSideImages] = useState({
+    chest: "",
+    middle: "",
+    bottom: "",
+    back_shoulder_blade: "",
+    back_middle: "",
+    back_bottom: "",
+    heart: "",
+  });
   const [showReferenceTemplate, setShowReferenceTemplate] = useState(false);
   const [composedTexture, setComposedTexture] = useState<string | null>(null);
 
@@ -88,7 +100,7 @@ const Customize = () => {
 
   // Generate composite texture with support for reference template
   useEffect(() => {
-    const hasImages = !!(sideImages.front || sideImages.back || sideImages.left || sideImages.right);
+    const hasImages = Object.values(sideImages).some((v) => !!v);
     
     if (!hasImages) {
       setComposedTexture(null);
@@ -98,8 +110,8 @@ const Customize = () => {
     try {
       const baseColor = selectedColor?.hex_code || "#f5f5f5";
       const canvas = document.createElement("canvas");
-      canvas.width = 2048;
-      canvas.height = 2048;
+      canvas.width = 4267;
+      canvas.height = 4267;
       const ctx = canvas.getContext("2d");
       
       if (!ctx) return;
@@ -126,11 +138,15 @@ const Customize = () => {
 
       function drawImages() {
         // Zones for image placement - coordinates from user testing
+        // Absolute pixel values for 4267x4267 template
         const zones = {
-          front: { x: canvas.width * 0.095, y: canvas.height * 0.18, width: canvas.width * 0.35, height: canvas.height * 0.40 },
-          back: { x: canvas.width * 0.58, y: canvas.height * 0.18, width: canvas.width * 0.35, height: canvas.height * 0.40 },
-          left: { x: canvas.width * 0.10, y: canvas.height * 0.76, width: canvas.width * 0.17, height: canvas.height * 0.10 },
-          right: { x: canvas.width * 0.59, y: canvas.height * 0.76, width: canvas.width * 0.17, height: canvas.height * 0.10 },
+          chest: { x: 499, y: 640, width: 1280, height: 640 },
+          middle: { x: 499, y: 1280, width: 1280, height: 853 },
+          bottom: { x: 499, y: 2133, width: 1280, height: 725 },
+          back_shoulder_blade: { x: 2632, y: 640, width: 1280, height: 640 },
+          back_middle: { x: 2632, y: 1280, width: 1280, height: 853 },
+          back_bottom: { x: 2632, y: 2133, width: 1280, height: 725 },
+          heart: { x: 1352, y: 853, width: 427, height: 427 },
         };
 
         let imagesLoaded = 0;
@@ -168,10 +184,13 @@ const Customize = () => {
           img.src = src;
         };
 
-        if (sideImages.front) drawImage(sideImages.front, zones.front);
-        if (sideImages.back) drawImage(sideImages.back, zones.back);
-        if (sideImages.left) drawImage(sideImages.left, zones.left);
-        if (sideImages.right) drawImage(sideImages.right, zones.right);
+        if (sideImages.chest) drawImage(sideImages.chest, zones.chest);
+        if (sideImages.middle) drawImage(sideImages.middle, zones.middle);
+        if (sideImages.bottom) drawImage(sideImages.bottom, zones.bottom);
+        if (sideImages.back_shoulder_blade) drawImage(sideImages.back_shoulder_blade, zones.back_shoulder_blade);
+        if (sideImages.back_middle) drawImage(sideImages.back_middle, zones.back_middle);
+        if (sideImages.back_bottom) drawImage(sideImages.back_bottom, zones.back_bottom);
+        if (sideImages.heart) drawImage(sideImages.heart, zones.heart);
       }
 
     } catch (error) {
@@ -181,13 +200,16 @@ const Customize = () => {
   }, [sideImages, selectedColor?.hex_code, showReferenceTemplate]);
 
   const fileInputsRef = useRef<Record<string, HTMLInputElement | null>>({
-    front: null,
-    back: null,
-    left: null,
-    right: null,
+    chest: null,
+    middle: null,
+    bottom: null,
+    back_shoulder_blade: null,
+    back_middle: null,
+    back_bottom: null,
+    heart: null,
   });
 
-  const handleSideUpload = useCallback((side: "front" | "back" | "left" | "right") => {
+  const handleSideUpload = useCallback((side: keyof typeof sideImages) => {
     return (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (file) {
@@ -204,7 +226,7 @@ const Customize = () => {
     };
   }, []);
 
-  const clearSide = (side: "front" | "back" | "left" | "right") => {
+  const clearSide = (side: keyof typeof sideImages) => {
     setSideImages((prev) => ({
       ...prev,
       [side]: "",
@@ -215,7 +237,15 @@ const Customize = () => {
   };
 
   const clearAllImages = () => {
-    setSideImages({ front: "", back: "", left: "", right: "" });
+    setSideImages({
+      chest: "",
+      middle: "",
+      bottom: "",
+      back_shoulder_blade: "",
+      back_middle: "",
+      back_bottom: "",
+      heart: "",
+    });
     Object.values(fileInputsRef.current).forEach((input) => {
       if (input) input.value = "";
     });
@@ -244,7 +274,7 @@ const Customize = () => {
     });
   };
 
-  const hasAnySideImage = !!(sideImages.front || sideImages.back || sideImages.left || sideImages.right);
+  const hasAnySideImage = Object.values(sideImages).some((v) => !!v);
 
   const dataUrlToFile = (dataUrl: string, filename: string) => {
     const [meta, content] = dataUrl.split(",");
@@ -330,10 +360,13 @@ const Customize = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    { key: "front", label: "Front" },
-                    { key: "back", label: "Back" },
-                    { key: "left", label: "Left Sleeve" },
-                    { key: "right", label: "Right Sleeve" },
+                    { key: "chest", label: "Chest" },
+                    { key: "middle", label: "Middle" },
+                    { key: "bottom", label: "Bottom" },
+                    { key: "back_shoulder_blade", label: "Back Shoulder Blade" },
+                    { key: "back_middle", label: "Back Middle" },
+                    { key: "back_bottom", label: "Back Bottom" },
+                    { key: "heart", label: "Heart" },
                   ].map((slot) => {
                     const value = sideImages[slot.key as keyof typeof sideImages];
                     return (
@@ -518,6 +551,15 @@ const Customize = () => {
                   className="w-full"
                   disabled={!selectedSize || !selectedType || !selectedColor || isUploading}
                   onClick={async () => {
+                    if (!user) {
+                      toast({
+                        title: "Login required",
+                        description: "Please log in to save your design.",
+                        variant: "destructive",
+                      });
+                      navigate("/login");
+                      return;
+                    }
                     if (!selectedSize) {
                       toast({
                         title: "Error",
@@ -568,7 +610,15 @@ const Customize = () => {
                       };
 
                       // Attach original images for each side if present
-                      ["front", "back", "left", "right"].forEach((side) => {
+                      [
+                        "chest",
+                        "middle",
+                        "bottom",
+                        "back_shoulder_blade",
+                        "back_middle",
+                        "back_bottom",
+                        "heart",
+                      ].forEach((side) => {
                         const imgData = sideImages[side as keyof typeof sideImages];
                         if (imgData) {
                           formData.append(`original_${side}`, dataUrlToFile(imgData, `original-${side}.png`));

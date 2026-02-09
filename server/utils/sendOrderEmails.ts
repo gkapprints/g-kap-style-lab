@@ -14,27 +14,32 @@ export async function sendOrderEmails(order: any) {
 
   /* ---------------- ITEMS HTML ---------------- */
   const itemsHtml = order_items
-    .map(
-      (item: any) => `
-      <tr>
-        <td style="padding:10px;">
-          <img 
-            src="${item.products?.image_url}" 
-            alt="Product Image" 
-            width="80"
-            style="border-radius:8px;"
-          />
-        </td>
-        <td style="padding:10px;">
-          <b>${item.products?.name || "Product"}</b><br/>
-          Size: ${item.size}<br/>
-          Color: ${item.color}<br/>
-          Qty: ${item.quantity}
-        </td>
-        <td style="padding:10px;">₹${item.price}</td>
-      </tr>
-    `
-    )
+    .map((item: any) => {
+      // If this is a custom design order, show the actual uploaded image
+      // Always show image and link for all order items
+      let imageUrl = item.design_image_url || item.products?.image_url || "";
+      let productName = item.design_id ? "Custom Design" : (item.products?.name || "Product");
+      return `
+        <tr>
+          <td style="padding:10px;">
+            <img 
+              src="${imageUrl}" 
+              alt="Product Image" 
+              width="80"
+              style="border-radius:8px;"
+            />
+            ${imageUrl ? `<br/><a href="${imageUrl}" target="_blank" style="font-size:12px;word-break:break-all;">View Image Link</a>` : ""}
+          </td>
+          <td style="padding:10px;">
+            <b>${productName}</b><br/>
+            Size: ${item.size}<br/>
+            Color: ${item.color}<br/>
+            Qty: ${item.quantity}
+          </td>
+          <td style="padding:10px;">₹${item.price}</td>
+        </tr>
+      `;
+    })
     .join("");
 
   /* ---------------- EMAIL HTML ---------------- */

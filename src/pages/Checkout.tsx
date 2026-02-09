@@ -32,6 +32,7 @@ import { useDeleteDesign } from "@/hooks/useCustomize";
 import { useCreateOrder } from "@/hooks/useOrders";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/contexts/AuthContext";
+import { useClearCart } from "@/hooks/useCart";
 import { useAddresses } from "@/hooks/useAddresses";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "../config/supabase";
@@ -52,10 +53,13 @@ const Checkout = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
-  const { data: savedAddresses = [] } = useAddresses();
+  const { mutate: clearCart } = useClearCart();
   const [step, setStep] = useState<"shipping" | "payment" | "confirmation">(
     "shipping",
   );
+  // Addresses
+  const { data: addresses = [] } = useAddresses();
+  const savedAddresses = addresses;
   const [orderId, setOrderId] = useState<string | null>(null);
   const [shippingMethod, setShippingMethod] = useState("standard");
   const [buyingFor, setBuyingFor] = useState<"me" | "someone">("me");
@@ -67,6 +71,7 @@ const Checkout = () => {
   const { mutateAsync: deleteDesign } = useDeleteDesign();
   const { mutateAsync: createOrder } = useCreateOrder();
   const { data: cartItems = [] } = useCart();
+
 
   // Form state
   const [formData, setFormData] = useState({
@@ -336,6 +341,7 @@ const Checkout = () => {
                       color: designToBuy.tshirt_color,
                       price: designPrice,
                       design_id: designToBuy.id,
+                      design_image_url: designToBuy.image_url,
                     },
                   ]
                 : normalizedCartItems.map((item) => ({
@@ -372,6 +378,8 @@ const Checkout = () => {
 
             const createdOrder = await createOrder(orderData);
             setOrderId(createdOrder.id);
+            // Clear cart after successful order
+            clearCart();
 
             // 🔥 STEP 5: SEND EMAILS (ADMIN + USER)
             const {

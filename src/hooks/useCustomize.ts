@@ -46,9 +46,11 @@ export const useUploadDesign = () => {
   
   return useMutation({
     mutationFn: async (formData: FormData) => {
+      const token = localStorage.getItem('access_token');
       const { data } = await api.post<CustomDesign>('/customize', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
       });
       return data;

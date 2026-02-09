@@ -7,6 +7,18 @@ import { v4 as uuidv4 } from 'uuid';
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
+// Accept all zone image fields and the composed image
+const imageFields = [
+  { name: 'image', maxCount: 1 },
+  { name: 'original_chest', maxCount: 1 },
+  { name: 'original_middle', maxCount: 1 },
+  { name: 'original_bottom', maxCount: 1 },
+  { name: 'original_back_shoulder_blade', maxCount: 1 },
+  { name: 'original_back_middle', maxCount: 1 },
+  { name: 'original_back_bottom', maxCount: 1 },
+  { name: 'original_heart', maxCount: 1 },
+];
+
 // Get user's custom designs
 router.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
@@ -29,7 +41,7 @@ router.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
 });
 
 // Upload custom design (or update existing)
-router.post('/', authMiddleware, upload.single('image'), async (req: AuthRequest, res: Response) => {
+router.post('/', authMiddleware, upload.fields(imageFields), async (req: AuthRequest, res: Response) => {
   try {
 
     const userId = req.user?.id;
@@ -53,10 +65,13 @@ router.post('/', authMiddleware, upload.single('image'), async (req: AuthRequest
 
     // Prepare URLs for all images
     let imageUrl = existing_image_url;
-    let originalFrontUrl = null;
-    let originalBackUrl = null;
-    let originalLeftUrl = null;
-    let originalRightUrl = null;
+    let originalChestUrl = null;
+    let originalMiddleUrl = null;
+    let originalBottomUrl = null;
+    let originalBackShoulderBladeUrl = null;
+    let originalBackMiddleUrl = null;
+    let originalBackBottomUrl = null;
+    let originalHeartUrl = null;
 
     // Helper to upload a file buffer to Supabase and return the public URL
     async function uploadToSupabase(file: Express.Multer.File, side: string) {
@@ -77,15 +92,27 @@ router.post('/', authMiddleware, upload.single('image'), async (req: AuthRequest
 
     // If using upload.fields, handle all files
     if (req.files) {
-      // Handle original images
-      for (const side of ['front', 'back', 'left', 'right']) {
+      // Handle original images for all zones
+      const zoneKeys = [
+        'chest',
+        'middle',
+        'bottom',
+        'back_shoulder_blade',
+        'back_middle',
+        'back_bottom',
+        'heart',
+      ];
+      for (const side of zoneKeys) {
         const key = `original_${side}`;
         if (files && files[key] && files[key][0]) {
           const url = await uploadToSupabase(files[key][0], key);
-          if (side === 'front') originalFrontUrl = url;
-          if (side === 'back') originalBackUrl = url;
-          if (side === 'left') originalLeftUrl = url;
-          if (side === 'right') originalRightUrl = url;
+          if (side === 'chest') originalChestUrl = url;
+          if (side === 'middle') originalMiddleUrl = url;
+          if (side === 'bottom') originalBottomUrl = url;
+          if (side === 'back_shoulder_blade') originalBackShoulderBladeUrl = url;
+          if (side === 'back_middle') originalBackMiddleUrl = url;
+          if (side === 'back_bottom') originalBackBottomUrl = url;
+          if (side === 'heart') originalHeartUrl = url;
         }
       }
       // Handle composed texture
@@ -109,11 +136,14 @@ router.post('/', authMiddleware, upload.single('image'), async (req: AuthRequest
         image_scale: parseFloat(image_scale),
         image_rotation: parseFloat(image_rotation),
         price: price !== undefined ? parseFloat(price) : null,
-        // Store original image URLs
-        original_front_url: originalFrontUrl,
-        original_back_url: originalBackUrl,
-        original_left_url: originalLeftUrl,
-        original_right_url: originalRightUrl,
+        // Store original image URLs for all zones
+        original_chest_url: originalChestUrl,
+        original_middle_url: originalMiddleUrl,
+        original_bottom_url: originalBottomUrl,
+        original_back_shoulder_blade_url: originalBackShoulderBladeUrl,
+        original_back_middle_url: originalBackMiddleUrl,
+        original_back_bottom_url: originalBackBottomUrl,
+        original_heart_url: originalHeartUrl,
       };
       if (isUpdate) {
         const { data, error } = await supabase

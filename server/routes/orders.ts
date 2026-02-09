@@ -71,14 +71,32 @@ router.post("/", authMiddleware, async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ error: orderError.message });
     }
 
-    const orderItems = items.map((item: any) => ({
-      order_id: order.id,
-      product_id: item.product_id ?? null,
-      quantity: Number(item.quantity),
-      size: item.size,
-      color: item.color,
-      price: Number(item.price),
-    }));
+
+    // Support custom design orders
+    const orderItems = items.map((item: any) => {
+      // If this is a custom design order, include design_id and image_url
+      if (item.design_id) {
+        return {
+          order_id: order.id,
+          product_id: null,
+          quantity: Number(item.quantity),
+          size: item.size,
+          color: item.color,
+          price: Number(item.price),
+          design_id: item.design_id,
+          design_image_url: item.design_image_url, // will be undefined if not present
+        };
+      }
+      // Normal product order
+      return {
+        order_id: order.id,
+        product_id: item.product_id ?? null,
+        quantity: Number(item.quantity),
+        size: item.size,
+        color: item.color,
+        price: Number(item.price),
+      };
+    });
 
     await supabase.from("order_items").insert(orderItems);
 
