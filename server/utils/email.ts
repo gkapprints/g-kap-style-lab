@@ -1,15 +1,7 @@
-import nodemailer from "nodemailer";
+import fetch from "node-fetch";
 
-export const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true, // MUST be true for App Password
-  auth: {
-    user: process.env.NOTIFY_EMAIL_USER,
-    pass: process.env.NOTIFY_EMAIL_PASS,
-  },
-});
-
+// Uses Resend (https://resend.com/) for transactional email
+// Set RESEND_API_KEY and NOTIFY_EMAIL_FROM in your environment variables
 export async function sendOrderNotification({
   to,
   subject,
@@ -19,12 +11,29 @@ export async function sendOrderNotification({
   subject: string;
   html: string;
 }) {
-  const info = await transporter.sendMail({
-    from: `"GKAP Prints" <${process.env.NOTIFY_EMAIL_USER}>`,
-    to,
-    subject,
-    html,
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.NOTIFY_EMAIL_FROM;
+  if (!apiKey || !from) {
+    throw new Error("Missing RESEND_API_KEY or NOTIFY_EMAIL_FROM env var");
+  }
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to,
+      subject,
+      html,
+    }),
   });
-
-  console.log("✅ Email sent:", info.messageId);
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("❌ Email send failed:", text);
+    throw new Error(`Resend API error: ${text}`);
+  }
+  const data = await res.json();
+  console.log("✅ Email sent via Resend:", data.id);
 }
