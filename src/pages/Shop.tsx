@@ -61,6 +61,11 @@ const Shop = () => {
       fit: p.fit,
       isNew: p.is_new,
       isBestseller: p.is_bestseller,
+      // Map product_images to images for ProductCard compatibility
+      images: (p.product_images || []).map((img) => ({
+        image_url: img.image_url,
+        color: img.color,
+      })),
     }));
   }, [apiProducts]);
 
