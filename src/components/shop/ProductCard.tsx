@@ -27,6 +27,9 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product, selectedColor }: ProductCardProps) => {
+  // DEBUG: Log product prop
+  console.log("ProductCard product:", product);
+
   const { mutateAsync: addToCart, isPending } = useAddToCart();
   const { toast } = useToast();
   // Show all images for the product, regardless of color
