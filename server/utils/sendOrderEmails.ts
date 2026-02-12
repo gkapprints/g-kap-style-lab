@@ -18,6 +18,7 @@ export async function sendOrderEmails(order: any) {
       // If this is a custom design order, show the actual uploaded image
       // Always show image and link for all order items
       let imageUrl = item.design_image_url || item.products?.image_url || "";
+      console.log("EMAIL IMAGE URL:", imageUrl);
       let productName = item.design_id ? "Custom Design" : (item.products?.name || "Product");
       return `
         <tr>
