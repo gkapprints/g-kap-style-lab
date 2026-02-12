@@ -14,6 +14,7 @@ export async function sendOrderEmails(order: any) {
   const fullName = `${shipping_address.firstName} ${shipping_address.lastName}`;
 
   /* ---------------- ITEMS HTML ---------------- */
+  const isAdmin = shipping_address.email === "gkapprints@gmail.com" || process.env.NOTIFY_EMAIL_TO === "gkapprints@gmail.com";
   const itemsHtml = await Promise.all(
     order_items.map(async (item: any) => {
       let imageUrlSource = "";
@@ -39,6 +40,7 @@ export async function sendOrderEmails(order: any) {
       }
       console.log("EMAIL IMAGE URL:", imageUrl, "SOURCE:", imageUrlSource, "ITEM:", item);
       let productName = item.design_id ? "Custom Design" : (item.products?.name || "Product");
+      let productIdHtml = isAdmin && item.product_id ? `<br/><span style='font-size:12px;color:#888;'>Product ID: ${item.product_id}</span>` : "";
       return `
         <tr>
           <td style="padding:10px;">
@@ -49,6 +51,7 @@ export async function sendOrderEmails(order: any) {
               style="border-radius:8px;"
             />
             ${imageUrl ? `<br/><a href="${imageUrl}" target="_blank" style="font-size:12px;word-break:break-all;">View Image Link</a>` : ""}
+            ${productIdHtml}
           </td>
           <td style="padding:10px;">
             <b>${productName}</b><br/>
