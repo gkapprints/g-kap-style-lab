@@ -29,20 +29,27 @@ interface ProductCardProps {
 export const ProductCard = ({ product, selectedColor }: ProductCardProps) => {
   const { mutateAsync: addToCart, isPending } = useAddToCart();
   const { toast } = useToast();
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  
-  // Filter images by selectedColor if provided, otherwise use all images
-  const colorFilteredImages = selectedColor
-    ? product.images?.filter(img => img.color === selectedColor)
-    : product.images;
-  
-  // Only use images if they exist for this color, otherwise show placeholder
-  const displayImages = colorFilteredImages && colorFilteredImages.length > 0 
-    ? colorFilteredImages.map(img => img.image_url)
+  // Show all images for the product, regardless of color
+  const displayImages = product.images && product.images.length > 0
+    ? product.images.map(img => img.image_url)
     : ['/placeholder-product.svg'];
-  
-  const currentImage = displayImages[currentImageIndex];
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const hasMultipleImages = displayImages.length > 1 && displayImages[0] !== '/placeholder-product.svg';
+
+  // Auto-slide every 5 seconds
+  const autoSlideRef = useRef<NodeJS.Timeout | null>(null);
+  useEffect(() => {
+    if (!hasMultipleImages) return;
+    autoSlideRef.current = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % displayImages.length);
+    }, 5000);
+    return () => {
+      if (autoSlideRef.current) clearInterval(autoSlideRef.current);
+    };
+  }, [displayImages.length, hasMultipleImages]);
+
+  const currentImage = displayImages[currentImageIndex];
 
   const handleAdd = async () => {
     const selected_size = product.sizes[0];
@@ -81,17 +88,25 @@ export const ProductCard = ({ product, selectedColor }: ProductCardProps) => {
   const handlePrevImage = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentImageIndex((prev) => 
+    setCurrentImageIndex((prev) =>
       prev === 0 ? displayImages.length - 1 : prev - 1
     );
+    if (autoSlideRef.current) {
+      clearInterval(autoSlideRef.current);
+      autoSlideRef.current = null;
+    }
   };
-  
+
   const handleNextImage = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentImageIndex((prev) => 
+    setCurrentImageIndex((prev) =>
       prev === displayImages.length - 1 ? 0 : prev + 1
     );
+    if (autoSlideRef.current) {
+      clearInterval(autoSlideRef.current);
+      autoSlideRef.current = null;
+    }
   };
 
   return (
@@ -108,7 +123,7 @@ export const ProductCard = ({ product, selectedColor }: ProductCardProps) => {
             className="absolute inset-0 w-full h-full object-cover"
           />
           
-          {/* Image carousel navigation */}
+          {/* Image carousel navigation & indicators */}
           {hasMultipleImages && (
             <>
               <Button
@@ -127,19 +142,44 @@ export const ProductCard = ({ product, selectedColor }: ProductCardProps) => {
               >
                 <ChevronRight className="w-4 h-4" />
               </Button>
-              
-              {/* Image indicators */}
+
+              {/* Instagram-style image count (top right) */}
+              <div className="absolute top-2 right-3 bg-black/60 text-white text-xs px-2 py-0.5 rounded-full z-10 select-none">
+                {`${currentImageIndex + 1}/${displayImages.length}`}
+              </div>
+
+              {/* Dots (max 4, sliding window) */}
               <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
-                {displayImages.map((_, index) => (
-                  <div
-                    key={index}
-                    className={`w-1.5 h-1.5 rounded-full transition-all ${
-                      index === currentImageIndex 
-                        ? 'bg-white w-4' 
-                        : 'bg-white/50'
-                    }`}
-                  />
-                ))}
+                {(() => {
+                  const maxDots = 4;
+                  const total = displayImages.length;
+                  let start = 0;
+                  if (total > maxDots) {
+                    if (currentImageIndex < 2) {
+                      start = 0;
+                    } else if (currentImageIndex > total - 3) {
+                      start = total - maxDots;
+                    } else {
+                      start = currentImageIndex - 1;
+                    }
+                  }
+                  const dots = [];
+                  for (let i = 0; i < Math.min(total, maxDots); i++) {
+                    const imgIdx = start + i;
+                    if (imgIdx >= total) break;
+                    dots.push(
+                      <div
+                        key={imgIdx}
+                        className={`w-1.5 h-1.5 rounded-full transition-all ${
+                          imgIdx === currentImageIndex
+                            ? 'bg-white w-4'
+                            : 'bg-white/50'
+                        }`}
+                      />
+                    );
+                  }
+                  return dots;
+                })()}
               </div>
             </>
           )}
