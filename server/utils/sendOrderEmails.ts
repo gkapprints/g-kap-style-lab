@@ -17,8 +17,19 @@ export async function sendOrderEmails(order: any) {
     .map((item: any) => {
       // If this is a custom design order, show the actual uploaded image
       // Always show image and link for all order items
-      let imageUrl = item.design_image_url || item.products?.image_url || "";
-      console.log("EMAIL IMAGE URL:", imageUrl);
+        let imageUrlSource = "";
+        let imageUrl = "";
+        if (item.design_image_url) {
+          imageUrl = item.design_image_url;
+          imageUrlSource = "design_image_url";
+        } else if (item.products?.image_url) {
+          imageUrl = item.products.image_url;
+          imageUrlSource = "products.image_url";
+        } else {
+          imageUrl = "";
+          imageUrlSource = "none";
+        }
+        console.log("EMAIL IMAGE URL:", imageUrl, "SOURCE:", imageUrlSource, "ITEM:", item);
       let productName = item.design_id ? "Custom Design" : (item.products?.name || "Product");
       return `
         <tr>
