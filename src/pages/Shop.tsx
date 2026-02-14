@@ -53,7 +53,7 @@ const Shop = () => {
       name: p.name,
       price: p.price,
       originalPrice: p.original_price,
-      image: p.image_url || '/placeholder-product.svg',
+      image: p.image_url,
       category: p.category,
       collection: p.collection,
       colors: p.colors || [],

@@ -11,6 +11,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes gradientMove {
+  0% { background-position: 0% 50% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
+}
+
+.animate-gradient {
+  animation: gradientMove 10s ease infinite;
+}
+
 /* G-KAP Design System - Modern, Youth-Focused, Premium Yet Approachable
    Inspired by streetwear brands with soft neon accents and clean aesthetics
 */
