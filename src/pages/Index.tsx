@@ -5,8 +5,6 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { useProducts } from "@/hooks/useProducts";
 import { ProductCard } from "@/components/shop/ProductCard";
-import CursorGlow from "@/components/ui/CursorGlow";
-import Tilt from "react-parallax-tilt";
 
 const Index = () => {
   const { data: products = [] } = useProducts();
@@ -16,7 +14,7 @@ const Index = () => {
   return (
     <Layout>
       <div className=" text-black relative z-20">
-        <CursorGlow />
+        
 
         {/* ================= HERO ================= */}
         {/* ================= HERO ================= */}
@@ -80,15 +78,13 @@ const Index = () => {
     <div
       key={product.id}
       className="w-full"
-    >
-      <Tilt scale={1.02}>
-        <ProductCard
+
+ >       <ProductCard
           product={{
             ...product,
             image: product.image_url,
           }}
         />
-      </Tilt>
     </div>
   ))}
 </div>
