@@ -1,4 +1,5 @@
 import { sendOrderNotification } from "./email";
+import { supabase } from "../config/supabase";
 
 export async function sendOrderEmails(order: any) {
   const {
@@ -13,12 +14,33 @@ export async function sendOrderEmails(order: any) {
   const fullName = `${shipping_address.firstName} ${shipping_address.lastName}`;
 
   /* ---------------- ITEMS HTML ---------------- */
-  const itemsHtml = order_items
-    .map((item: any) => {
-      // If this is a custom design order, show the actual uploaded image
-      // Always show image and link for all order items
-      let imageUrl = item.design_image_url || item.products?.image_url || "";
+  const isAdmin = shipping_address.email === "gkapprints@gmail.com" || process.env.NOTIFY_EMAIL_TO === "gkapprints@gmail.com";
+  const itemsHtml = await Promise.all(
+    order_items.map(async (item: any) => {
+      let imageUrlSource = "";
+      let imageUrl = "";
+      if (item.design_image_url) {
+        imageUrl = item.design_image_url;
+        imageUrlSource = "design_image_url";
+      } else {
+        // Fetch product image for selected color
+        const { data: productImage, error } = await supabase
+          .from('product_images')
+          .select('image_url')
+          .eq('product_id', item.product_id)
+          .eq('color', item.color)
+          .order('display_order', { ascending: true })
+          .limit(1)
+          .single();
+        if (error) {
+          console.error('Error fetching product image:', error);
+        }
+        imageUrl = productImage?.image_url || item.products?.image_url || '/placeholder-product.svg';
+        imageUrlSource = productImage?.image_url ? 'product_images_table' : (item.products?.image_url ? 'products.image_url' : 'placeholder');
+      }
+      console.log("EMAIL IMAGE URL:", imageUrl, "SOURCE:", imageUrlSource, "ITEM:", item);
       let productName = item.design_id ? "Custom Design" : (item.products?.name || "Product");
+      let productIdHtml = isAdmin && item.product_id ? `<br/><span style='font-size:12px;color:#888;'>Product ID: ${item.product_id}</span>` : "";
       return `
         <tr>
           <td style="padding:10px;">
@@ -29,6 +51,7 @@ export async function sendOrderEmails(order: any) {
               style="border-radius:8px;"
             />
             ${imageUrl ? `<br/><a href="${imageUrl}" target="_blank" style="font-size:12px;word-break:break-all;">View Image Link</a>` : ""}
+            ${productIdHtml}
           </td>
           <td style="padding:10px;">
             <b>${productName}</b><br/>
@@ -40,7 +63,8 @@ export async function sendOrderEmails(order: any) {
         </tr>
       `;
     })
-    .join("");
+  );
+  const itemsHtmlStr = itemsHtml.join("");
 
   /* ---------------- EMAIL HTML ---------------- */
   const html = `
@@ -73,7 +97,7 @@ export async function sendOrderEmails(order: any) {
           </tr>
         </thead>
         <tbody>
-          ${itemsHtml}
+          ${itemsHtmlStr}
         </tbody>
       </table>
 
