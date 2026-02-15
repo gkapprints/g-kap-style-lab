@@ -113,7 +113,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         redirectTo: `${frontendUrl}/shop`,
       },
     });
-
     if (error) throw error;
     return data;
   };
@@ -122,10 +121,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'facebook',
       options: {
-        redirectTo: `${window.location.origin}/shop`,
+        redirectTo: `${frontendUrl}/shop`,
       },
     });
-
     if (error) throw error;
     return data;
   };
@@ -134,10 +132,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'twitter',
       options: {
-        redirectTo: `${window.location.origin}/shop`,
+        redirectTo: `${frontendUrl}/shop`,
       },
     });
-
     if (error) throw error;
     return data;
   };
