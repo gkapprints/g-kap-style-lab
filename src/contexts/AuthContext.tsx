@@ -107,10 +107,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Use environment variable for frontend base URL
   const frontendUrl = import.meta.env.VITE_FRONTEND_URL || window.location.origin;
   const signInWithGoogle = async () => {
+    const redirectTo = `${frontendUrl}/shop`;
+    console.log("VITE_FRONTEND_URL:", import.meta.env.VITE_FRONTEND_URL);
+    console.log("window.location.origin:", window.location.origin);
+    console.log("redirectTo:", redirectTo);
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${frontendUrl}/shop`,
+        redirectTo,
       },
     });
     if (error) throw error;
