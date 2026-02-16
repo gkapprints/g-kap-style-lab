@@ -152,17 +152,48 @@ export const Navbar = () => {
                   key={link.path}
                   to={link.path}
                   className="text-xl uppercase text-black"
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.name}
                 </Link>
               ))}
 
+              {/* Mobile Action Icons */}
+              <div className="flex justify-around items-center mt-6 gap-6">
+                <Button variant="ghost" size="icon">
+                  <Search className="h-6 w-6" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => { setIsMobileMenuOpen(false); handleAddressClick(); }}>
+                  <span className="material-icons text-[24px]">place</span>
+                </Button>
+                <Link to={user ? "/profile" : "/login"} onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="ghost" size="icon">
+                    <span className="material-icons text-[24px]">account_circle</span>
+                  </Button>
+                </Link>
+                <Link to="/cart" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="ghost" size="icon" className="relative">
+                    <span className="material-icons text-[24px]">shopping_cart</span>
+                    {cartCount > 0 && (
+                      <motion.span
+                        key={cartCount}
+                        initial={{ scale: 0.5 }}
+                        animate={{ scale: 1 }}
+                        className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-bold"
+                      >
+                        {cartCount > 99 ? "99+" : cartCount}
+                      </motion.span>
+                    )}
+                  </Button>
+                </Link>
+              </div>
+
               {!user && (
                 <>
-                  <Link to="/login" className="text-xl uppercase">
+                  <Link to="/login" className="text-xl uppercase" onClick={() => setIsMobileMenuOpen(false)}>
                     Sign In
                   </Link>
-                  <Link to="/signup" className="text-xl uppercase">
+                  <Link to="/signup" className="text-xl uppercase" onClick={() => setIsMobileMenuOpen(false)}>
                     Create Account
                   </Link>
                 </>
