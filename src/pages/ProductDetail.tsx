@@ -174,16 +174,6 @@ const ProductDetail = () => {
                 alt={productData.name}
                 className="absolute inset-0 w-full h-full object-cover"
               />
-              {productData.isNew && (
-                <Badge className="absolute top-4 left-4 bg-coral text-primary-foreground border-0">
-                  New Arrival
-                </Badge>
-              )}
-              {productData.isBestseller && (
-                <Badge className="absolute top-4 left-4 bg-mint text-foreground border-0">
-                  Bestseller
-                </Badge>
-              )}
             </motion.div>
             
             {/* Thumbnail gallery */}

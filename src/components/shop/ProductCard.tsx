@@ -163,23 +163,6 @@ export const ProductCard = ({ product, selectedColor }: ProductCardProps) => {
           )}
           
           {/* Badges */}
-          <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-            {product.isNew && (
-              <Badge className="bg-blue-50 text-blue-700 border border-blue-200 shadow-sm font-medium text-xs px-3 py-0.5 uppercase tracking-wide rounded-sm">
-                New
-              </Badge>
-            )}
-            {product.isBestseller && (
-              <Badge className="bg-amber-50 text-amber-700 border border-amber-200 shadow-sm font-medium text-xs px-3 py-0.5 uppercase tracking-wide rounded-sm">
-                Bestseller
-              </Badge>
-            )}
-            {product.originalPrice && (
-              <Badge className="bg-red-50 text-red-700 border border-red-200 shadow-sm font-medium text-xs px-3 py-0.5 uppercase tracking-wide rounded-sm">
-                Sale
-              </Badge>
-            )}
-          </div>
           
           {/* Quick actions */}
           <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
