@@ -660,6 +660,67 @@ const Customize = () => {
                   {isUploading ? "Saving..." : "Save Design"}
                 </Button>
 
+                  {/* Buy Now Button: same logic as Profile Saved Designs */}
+                  <Button
+                    variant="hero"
+                    size="xl"
+                    className="w-full mt-3"
+                    disabled={!selectedSize || !selectedType || !selectedColor || isUploading}
+                    onClick={() => {
+                      if (!user) {
+                        toast({
+                          title: "Login required",
+                          description: "Please log in to buy your design.",
+                          variant: "destructive",
+                        });
+                        navigate("/login");
+                        return;
+                      }
+                      if (!selectedSize) {
+                        toast({
+                          title: "Error",
+                          description: "Please select a size",
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+                      if (!selectedType || !selectedColor) {
+                        toast({
+                          title: "Error",
+                          description: "Please choose a t-shirt type and color",
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+                      if (!hasAnySideImage) {
+                        toast({
+                          title: "Error",
+                          description: "Please upload at least one image to personalize the shirt.",
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+                      // Compose the design object similar to Profile's Saved Designs
+                      const designToBuy = {
+                        tshirt_type: selectedType.type_id,
+                        tshirt_type_name: selectedType.name,
+                        tshirt_color: selectedColor.color_id,
+                        tshirt_color_name: selectedColor.name,
+                        size: selectedSize,
+                        print_location: printLocation,
+                        quantity,
+                        price: totalPrice,
+                        sideImages,
+                        composedTexture,
+                        // Add more fields if needed
+                      };
+                      localStorage.setItem('designToBuy', JSON.stringify(designToBuy));
+                      navigate("/checkout");
+                    }}
+                  >
+                    Buy Now
+                  </Button>
+
                 {!selectedSize && (
                   <p className="text-sm text-destructive mt-2 text-center">
                     Please select a size
