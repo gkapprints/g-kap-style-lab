@@ -129,22 +129,24 @@ export const ProductCard = ({ product, selectedColor }: ProductCardProps) => {
           {/* Image carousel navigation */}
           {hasMultipleImages && (
             <>
-              <Button
-                size="icon"
-                variant="secondary"
-                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full shadow-md bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity"
+              <button
+                type="button"
+                aria-label="Previous image"
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-0 m-0 bg-transparent border-none outline-none"
+                style={{ background: 'none', boxShadow: 'none' }}
                 onClick={handlePrevImage}
               >
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
-              <Button
-                size="icon"
-                variant="secondary"
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full shadow-md bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                <ChevronLeft className="w-6 h-6 text-white drop-shadow" />
+              </button>
+              <button
+                type="button"
+                aria-label="Next image"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-0 m-0 bg-transparent border-none outline-none"
+                style={{ background: 'none', boxShadow: 'none' }}
                 onClick={handleNextImage}
               >
-                <ChevronRight className="w-4 h-4" />
-              </Button>
+                <ChevronRight className="w-6 h-6 text-white drop-shadow" />
+              </button>
               
               {/* Image indicators */}
               <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
