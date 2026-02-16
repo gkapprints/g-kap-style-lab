@@ -28,7 +28,6 @@
 /* Smooth scrolling for the entire page */
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
 }
 
 @layer base {
@@ -220,7 +219,6 @@ html {
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
-    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
