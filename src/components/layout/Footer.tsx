@@ -133,7 +133,7 @@ export const Footer = () => {
               </li>
               <li className="flex items-start gap-2 text-sm text-background/70">
                 <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
-                <span>H.NO : 4-7-285/11 & 12 PLOT NO : 11 & 12 EP Padmavathi colony hayathnagar hyderabad 501505</span>
+                <span>EP Padmavathi colony hayathnagar hyderabad 501505</span>
               </li>
             </ul>
           </div>
