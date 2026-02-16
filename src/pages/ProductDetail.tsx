@@ -22,15 +22,19 @@ const ProductDetail = () => {
 
   const productData = useMemo(() => {
     if (!product) return null;
-    // Get primary image from product_images array, fallback to image_url
-    const primaryImage = product.product_images?.[0]?.image_url || product.image_url || '/placeholder-product.svg';
+    // Map product_images to images array for compatibility with ProductCard
+    const images = (product.product_images || []).map(img => ({
+      image_url: img.image_url,
+      color: img.color,
+    }));
+    const primaryImage = images[0]?.image_url || product.image_url || '/placeholder-product.svg';
     return {
       id: product.id,
       name: product.name,
       price: product.price,
       originalPrice: product.original_price,
       image: primaryImage,
-      images: product.product_images || [],
+      images,
       category: product.category,
       collection: product.collection,
       colors: product.colors || [],
