@@ -22,19 +22,15 @@ const ProductDetail = () => {
 
   const productData = useMemo(() => {
     if (!product) return null;
-    
-    // Get primary image from images array, fallback to first image
-    const primaryImage = product.images?.find((img: any) => img.is_primary)?.image_url 
-      || product.images?.[0]?.image_url 
-      || '/placeholder-product.svg';
-    
+    // Get primary image from product_images array, fallback to image_url
+    const primaryImage = product.product_images?.[0]?.image_url || product.image_url || '/placeholder-product.svg';
     return {
       id: product.id,
       name: product.name,
       price: product.price,
       originalPrice: product.original_price,
       image: primaryImage,
-      images: product.images || [],
+      images: product.product_images || [],
       category: product.category,
       collection: product.collection,
       colors: product.colors || [],
@@ -42,11 +38,11 @@ const ProductDetail = () => {
       fit: product.fit,
       isNew: product.is_new,
       isBestseller: product.is_bestseller,
-      freeShippingThreshold: product.free_shipping_threshold || 50,
-      returnDays: product.return_days || 30,
+      freeShippingThreshold: 50,
+      returnDays: 30,
       description: product.description,
-      fabricCare: product.fabric_care,
-      shippingInfo: product.shipping_info,
+      fabricCare: undefined,
+      shippingInfo: undefined,
     };
   }, [product]);
 
@@ -81,13 +77,10 @@ const ProductDetail = () => {
     if (!productData || !productData.images.length) {
       return [{ image_url: '/placeholder-product.svg' }];
     }
-    
-    // Only show images that match the selected color exactly
+    // Only show images that match the selected color exactly (if color info exists)
     const colorImages = productData.images.filter(
-      (img: any) => img.color === selectedColor
+      (img: any) => !selectedColor || img.color === selectedColor
     );
-    
-    // If no images for this color, show placeholder
     return colorImages.length > 0 ? colorImages : [{ image_url: '/placeholder-product.svg' }];
   }, [productData, selectedColor]);
 
@@ -347,6 +340,34 @@ const ProductDetail = () => {
               >
                 <ShoppingBag className="w-5 h-5 mr-2" />
                 {isPending ? "Adding..." : "Add to Cart"}
+              </Button>
+              <Button
+                className="flex-1"
+                size="xl"
+                variant="hero"
+                disabled={!selectedSize || isPending}
+                onClick={async () => {
+                  try {
+                    await addToCart({
+                      product_id: productData.id,
+                      quantity: quantity,
+                      selected_size: selectedSize,
+                      selected_color: selectedColor,
+                    });
+                    // Navigate to checkout after adding to cart
+                    window.location.href = "/checkout";
+                  } catch (error: any) {
+                    if (error?.message === "AUTH_REQUIRED") return;
+                    toast({
+                      title: "Error",
+                      description: error.response?.data?.error || "Failed to proceed to buy",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+              >
+                Buy Now
+                <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
               <Button variant="outline" size="xl">
                 <Heart className="w-5 h-5" />
