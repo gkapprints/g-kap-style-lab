@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const whatsappNumber = "919876543210"; // Replace with your WhatsApp number
+const whatsappNumber = "7287980727"; // Replace with your WhatsApp number
 const whatsappMessage = encodeURIComponent("Hello! I have a question about G-KAP.");
 const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
 
