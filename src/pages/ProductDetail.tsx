@@ -22,11 +22,8 @@ const ProductDetail = () => {
 
   const productData = useMemo(() => {
     if (!product) return null;
-    // Map product_images to images array for compatibility with ProductCard
-    const images = (product.product_images || []).map(img => ({
-      image_url: img.image_url,
-      color: img.color,
-    }));
+    // Use images field for compatibility with backend
+    const images = product.images || [];
     const primaryImage = images[0]?.image_url || product.image_url || '/placeholder-product.svg';
     return {
       id: product.id,
