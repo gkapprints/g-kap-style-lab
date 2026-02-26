@@ -267,8 +267,8 @@ const Shop = () => {
   return (
     <Layout>
       {/* Hero Banner */}
-      <section className="bg-gradient-mesh py-16 md:py-24">
-        <div className="section-container text-center">
+      <section className="bg-gradient-mesh py-16 md:py-24 w-full">
+        <div className="w-full max-w-screen-xl mx-auto px-4 text-center">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -287,8 +287,8 @@ const Shop = () => {
         </div>
       </section>
 
-      <section className="py-12">
-        <div className="section-container">
+      <section className="py-12 w-full">
+        <div className="w-full max-w-screen-xl mx-auto px-4">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Desktop Sidebar Filters */}
             <aside className="hidden lg:block w-64 shrink-0">
@@ -440,7 +440,7 @@ const Shop = () => {
                   Failed to load products. Please check the backend.
                 </div>
               ) : filteredProducts.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 w-full">
                   {filteredProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}

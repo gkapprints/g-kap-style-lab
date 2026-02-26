@@ -38,7 +38,7 @@ const socialLinks = [
 
 export const Footer = () => {
   return (
-    <footer className="bg-foreground text-background">
+    <footer className="w-full bg-foreground text-background overflow-x-hidden">
       {/* Main Footer Content */}
       <div className="section-container py-12 md:py-16">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-12">
@@ -123,9 +123,9 @@ export const Footer = () => {
           <div>
             <h4 className="font-display font-semibold mb-4">Contact</h4>
             <ul className="space-y-3">
-              <li className="flex items-start gap-2 text-sm text-background/70">
+              <li className="flex items-start gap-2 text-sm text-background/70 min-w-0">
                 <Mail className="w-4 h-4 mt-0.5 shrink-0" />
-                <span>gkapprints@gmail.com</span>
+                <span className="break-all overflow-wrap break-words min-w-0 flex-shrink">gkapprints@gmail.com</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-background/70">
                 <Phone className="w-4 h-4 mt-0.5 shrink-0" />

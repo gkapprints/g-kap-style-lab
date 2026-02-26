@@ -147,7 +147,7 @@ const ProductDetail = () => {
 
   return (
     <Layout>
-      <div className="section-container py-8">
+      <div className="w-full max-w-screen-xl mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm mb-8">
           <Link to="/" className="text-muted-foreground hover:text-primary">
@@ -161,35 +161,36 @@ const ProductDetail = () => {
           <span className="text-foreground">{productData.name}</span>
         </nav>
 
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 w-full">
           {/* Product Images */}
-          <div className="space-y-4">
+          <div className="space-y-4 w-full max-w-md mx-auto lg:mx-0">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-muted"
+              className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-muted w-full"
             >
               <img
                 src={displayImages[activeImage]?.image_url || productData.image}
                 alt={productData.name}
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-contain max-w-full max-h-full"
+                style={{ maxWidth: '100%', maxHeight: '100%' }}
               />
             </motion.div>
-            
             {/* Thumbnail gallery */}
-            <div className="flex gap-3 overflow-x-auto">
+            <div className="flex gap-3 overflow-x-auto w-full">
               {displayImages.map((img: any, i: number) => (
                 <button
                   key={i}
                   onClick={() => setActiveImage(i)}
-                  className={`relative aspect-square w-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
+                  className={`relative aspect-square w-16 sm:w-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
                     activeImage === i ? "border-primary" : "border-transparent"
                   }`}
+                  style={{ minWidth: '4rem' }}
                 >
                   <img
                     src={img.image_url}
                     alt={`View ${i + 1}`}
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full object-contain max-w-full max-h-full"
                   />
                 </button>
               ))}
@@ -197,7 +198,7 @@ const ProductDetail = () => {
           </div>
 
           {/* Product Info */}
-          <div className="space-y-6">
+          <div className="space-y-6 w-full min-w-0">
             <div>
               <p className="text-muted-foreground mb-1">{productData.fit}</p>
               <h1 className="text-3xl md:text-4xl font-display font-bold mb-2">
@@ -301,11 +302,11 @@ const ProductDetail = () => {
             </div>
 
             {/* Add to Cart */}
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3 w-full min-w-0">
               <Button
                 variant="hero"
                 size="xl"
-                className="flex-1"
+                className="flex-1 min-w-[140px]"
                 disabled={!selectedSize || isPending}
                 onClick={async () => {
                   try {
@@ -333,7 +334,7 @@ const ProductDetail = () => {
                 {isPending ? "Adding..." : "Add to Cart"}
               </Button>
               <Button
-                className="flex-1"
+                className="flex-1 min-w-[140px]"
                 size="xl"
                 variant="hero"
                 disabled={!selectedSize || isPending}
@@ -360,7 +361,7 @@ const ProductDetail = () => {
                 Buy Now
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
-              <Button variant="outline" size="xl">
+              <Button variant="outline" size="xl" className="min-w-[60px]">
                 <Heart className="w-5 h-5" />
               </Button>
             </div>
