@@ -61,7 +61,8 @@ const Checkout = () => {
   const { data: addresses = [] } = useAddresses();
   const savedAddresses = addresses;
   const [orderId, setOrderId] = useState<string | null>(null);
-  const [shippingMethod, setShippingMethod] = useState("standard");
+  // Only standard shipping is available now
+  // No shipping method selection needed
   const [buyingFor, setBuyingFor] = useState<"me" | "someone">("me");
   const [selectedAddressId, setSelectedAddressId] = useState<string>("new");
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
@@ -269,8 +270,7 @@ const Checkout = () => {
         0,
       );
 
-  const shippingCost =
-    shippingMethod === "express" ? 200 : subtotal > 1000 ? 0 : 100;
+  const shippingCost = 100;
   const total = subtotal + shippingCost;
 
   // Razorpay payment integration
@@ -365,7 +365,7 @@ const Checkout = () => {
                 country: formData.country,
               },
 
-              shipping_method: shippingMethod,
+              shipping_method: "Standard Shipping",
               payment_method: "razorpay",
               subtotal,
               shipping_cost: shippingCost,
@@ -957,21 +957,9 @@ const Checkout = () => {
                   <h2 className="font-display font-bold text-xl mb-6">
                     Shipping Method
                   </h2>
-
-                  <RadioGroup
-                    value={shippingMethod}
-                    onValueChange={setShippingMethod}
-                    className="space-y-3"
-                  >
-                    <label
-                      className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-colors ${
-                        shippingMethod === "standard"
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:border-primary/50"
-                      }`}
-                    >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-4 rounded-xl border border-primary bg-primary/5">
                       <div className="flex items-center gap-3">
-                        <RadioGroupItem value="standard" id="standard" />
                         <div>
                           <p className="font-medium">Standard Shipping</p>
                           <p className="text-sm text-muted-foreground">
@@ -979,39 +967,9 @@ const Checkout = () => {
                           </p>
                         </div>
                       </div>
-                      {subtotal > 1000 ? (
-                        <div className="text-right">
-                          <span className="font-semibold text-muted-foreground line-through text-sm mr-2">
-                            ₹100
-                          </span>
-                          <span className="font-semibold text-green-600">
-                            FREE
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="font-semibold">₹100</span>
-                      )}
-                    </label>
-
-                    <label
-                      className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-colors ${
-                        shippingMethod === "express"
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:border-primary/50"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <RadioGroupItem value="express" id="express" />
-                        <div>
-                          <p className="font-medium">Express Shipping</p>
-                          <p className="text-sm text-muted-foreground">
-                            2-3 business days
-                          </p>
-                        </div>
-                      </div>
-                      <span className="font-semibold">₹200</span>
-                    </label>
-                  </RadioGroup>
+                      <span className="font-semibold">₹100</span>
+                    </div>
+                  </div>
                 </div>
 
                 <Button
@@ -1146,16 +1104,7 @@ const Checkout = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Shipping</span>
-                  {shippingCost === 0 ? (
-                    <div className="text-right">
-                      <span className="text-muted-foreground line-through text-xs mr-2">
-                        ₹100
-                      </span>
-                      <span className="font-semibold text-green-600">FREE</span>
-                    </div>
-                  ) : (
-                    <span>₹{shippingCost.toFixed(2)}</span>
-                  )}
+                  <span>₹{shippingCost.toFixed(2)}</span>
                 </div>
               </div>
 
