@@ -14,14 +14,13 @@ const footerLinks = {
   company: [
     { name: "About Us", path: "/about" },
     { name: "Contact", path: "/contact" },
-    { name: "Size Guide", path: "/size-guide" },
     { name: "Sustainability", path: "/about#sustainability" },
   ],
   support: [
     { name: "FAQ", path: "/contact#faq" },
     { name: "Shipping & Returns", path: "/shipping" },
     { name: "Track Order", path: "/track-order" },
-    { name: "Refund Policy", path: "/refund" },
+    { name: "Returns and Refund Policy", path: "/returns-and-refund-policy" },
   ],
   legal: [
     { name: "Privacy Policy", path: "/privacy" },
