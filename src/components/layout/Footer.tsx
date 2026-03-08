@@ -18,7 +18,7 @@ const footerLinks = {
   ],
   support: [
     { name: "FAQ", path: "/contact#faq" },
-    { name: "Shipping & Returns", path: "/shipping" },
+    // { name: "Shipping & Returns", path: "/shipping" },
     { name: "Track Order", path: "/track-order" },
     { name: "Returns and Refund Policy", path: "/returns-and-refund-policy" },
   ],
