@@ -25,6 +25,7 @@ const footerLinks = {
   ],
   legal: [
     { name: "Privacy Policy", path: "/privacy" },
+    { name: "Returns and Refund Policy", path: "/returns-and-refund-policy" },
     { name: "Terms & Conditions", path: "/terms-and-conditions" },
   ],
 };
